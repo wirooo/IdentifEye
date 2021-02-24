@@ -1,0 +1,7 @@
+photos/
+venv/
+__pycache__/
+*.pickle
+venv37/
+.idea/
+credentials.json
