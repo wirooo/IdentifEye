@@ -8,7 +8,7 @@ class ImageLabeller:
     """
     A simple gui to label and categorize images of faces.
     """
-    def __init__(self, img_dir, names):
+    def __init__(self, img_dir, dest_dir, names):
         """
         Initializes gui window and formats file structure
         :param img_dir: path to raw images
@@ -23,7 +23,8 @@ class ImageLabeller:
 
         image_viewer = [
             [sg.Text(photo_dir[0], size=(40, 1), key="-IMAGE_NAME-")],
-            [sg.Image(filename=os.path.join(img_dir, photo_dir[0]), key="-IMAGE-")]
+            # [sg.Image(filename=os.path.join(img_dir, photo_dir[0]), key="-IMAGE-")]
+            [sg.Image(key="-IMAGE-")]
         ]
         layout = [
             [
@@ -34,34 +35,37 @@ class ImageLabeller:
         ]
         self.window = sg.Window("Image Labeller", layout)
         self.img_dir = img_dir
+        self.dest_dir = dest_dir
         self.names = names
 
         # cleanup empty folders
-        for dir in os.listdir("photos"):
-            if os.path.isdir(f"photos/{dir}") and not os.listdir(f"photos/{dir}"):
-                os.rmdir(f"photos/{dir}")
+        for dir in os.listdir(dest_dir):
+            pth = os.path.join(dest_dir, dir)
+            if os.path.isdir(pth) and not os.listdir(pth):
+                os.rmdir(pth)
         # create a folder for each name
         for name in names:
-            if not os.path.exists(f"photos/{name}"):
-                os.mkdir(f"photos/{name}")
+            pth = os.path.join(dest_dir, name)
+            if not os.path.exists(pth):
+                os.mkdir(pth)
 
     def show(self):
         """
         Runs the gui and processes user input
         """
-        print(self.window.read())
         photo_dir = os.listdir(self.img_dir)
         i = 0
         while i < len(photo_dir):
+            image_file_name = photo_dir[i]
             self.window["-IMAGE_COUNT-"].update(f"{i+1}/{len(os.listdir(self.img_dir))}")
-            self.window["-IMAGE_NAME-"].update(photo_dir[i])
-            self.window["-IMAGE-"].update(filename=os.path.join(self.img_dir, photo_dir[i]))
+            self.window["-IMAGE_NAME-"].update(image_file_name)
+            self.window["-IMAGE-"].update(filename=os.path.join(self.img_dir, image_file_name))
             event, values = self.window.read()
             if event == "Exit" or event == sg.WIN_CLOSED:
                 break
             elif event.split("_")[0] == "-NAME":
                 name = event.split("_")[1][:-1]
-                copyfile(os.path.join(self.img_dir, photo_dir[i]), os.path.join(f"photos/{name}/", photo_dir[i]))
+                copyfile(os.path.join(self.img_dir, image_file_name), os.path.join(self.dest_dir, name, image_file_name))
                 i += 1
             elif event == "Skip":
                 i += 1
@@ -72,5 +76,5 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("names", type=str, nargs="+")
     args = parser.parse_args()
-    gui = ImageLabeller("photos/faces", args.names)
+    gui = ImageLabeller("photos/faces", "photos/labelled", args.names)
     gui.show()

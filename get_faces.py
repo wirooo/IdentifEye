@@ -1,6 +1,7 @@
 from facenet_pytorch import MTCNN
 import torch
 import os.path
+from PIL import Image
 
 
 def create_mtcnn():
@@ -39,5 +40,10 @@ def get_face(mtcnn, image, destination_dir, image_name, conf_thresh=0.9, size_th
 
 if __name__ == '__main__':
     device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
-    print(f"device: {device}")
     mtcnn = MTCNN(keep_all=True, device=device)
+
+    photo_dir = os.listdir("photos/raw")
+    for pth in photo_dir:
+        image = Image.open(os.path.join("photos/raw", pth))
+        get_face(mtcnn, image, "photos/faces", pth)
+
