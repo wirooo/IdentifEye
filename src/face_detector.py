@@ -27,12 +27,7 @@ class FaceDetector():
             for i, (name, pred) in enumerate(name_preds):
                 cv2.putText(frame, f"{name}: {pred:.3f}", (box[2], int(box[1] + i*25)), cv2.FONT_HERSHEY_SIMPLEX, 0.75 - (0.1*i), (0, 0, 255), 1, cv2.LINE_AA)
 
-            return frame
-
-
-    def detect_ROIs(self, boxes):
-        return [[int(box[x]) for x in [1, 3, 0, 2]] for box in boxes]
-
+        return frame
 
     def classify_face(self, face):
         destRGB = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
@@ -56,24 +51,25 @@ class FaceDetector():
         out = np.array(out[0].cpu())
         return pred, out
 
-
     def run(self):
         cap = cv2.VideoCapture(0)
         while True:
             ret, frame = cap.read()
-            boxes, face_probs = self.mtcnn.detect(frame)
-            name_probs = []
-            for box in boxes:
-                y1, y2, x1, x2 = int(box[1]), int(box[3]), int(box[0]), int(box[2])
-                face = frame[y1:y2, x1:x2]
-                pred, probs = self.classify_face(face)
-                name_probs.append(probs)
+            if ret:
+                boxes, face_probs = self.mtcnn.detect(frame)
+                if boxes is not None and len(boxes) > 0:
+                    name_probs = []
+                    for box in boxes:
+                        y1, y2, x1, x2 = int(box[1]), int(box[3]), int(box[0]), int(box[2])
+                        face = frame[y1:y2, x1:x2]
+                        pred, probs = self.classify_face(face)
+                        name_probs.append(probs)
 
-            # self.draw(frame, boxes, face_probs)
-            self.draw(frame, boxes, face_probs, name_probs)
-
-
-            cv2.imshow("Face Detection", frame)
+                    self.draw(frame, boxes, face_probs, name_probs)
+                else:
+                    cv2.putText(frame, "Couldn't Find Any Faces", (0, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.75,
+                                (0, 0, 255), 1, cv2.LINE_AA)
+                cv2.imshow("Face Detection", frame)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
