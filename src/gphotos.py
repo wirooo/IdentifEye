@@ -3,6 +3,7 @@ import pickle
 import os
 import io
 import requests
+import argparse
 from PIL import Image
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -117,7 +118,11 @@ class GPhotos:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--folder", type=str, nargs="?", default="credentials.json")
+    parser.add_argument("--creds", type=str, nargs="?", default="../photos/faces")
+    args = parser.parse_args()
     SCOPES = ['https://www.googleapis.com/auth/photoslibrary.readonly']
-    gphotos = GPhotos(SCOPES, "credentials.json", "../photos/faces_dl")
+    gphotos = GPhotos(SCOPES, args.creds, args.folder)
     gphotos.download_photos()
 
