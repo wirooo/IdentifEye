@@ -1,5 +1,5 @@
 # Identifeye
-Trains a model to perform facial recognition and labelling on your friends. 
+Trains a model to perform facial recognition and classification on your friends. 
 Uses Google Photos API to download images.
 Classification model developed using Pytorch using transfer learning on a pretrained CNN and facial recognition using facenet-pytorch.
 Contains a GUI based tool developed with PySimpleGUI to help labelling images.
