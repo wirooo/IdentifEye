@@ -23,7 +23,6 @@ class ImageLabeller:
 
         image_viewer = [
             [sg.Text(photo_dir[0], size=(40, 1), key="-IMAGE_NAME-")],
-            # [sg.Image(filename=os.path.join(img_dir, photo_dir[0]), key="-IMAGE-")]
             [sg.Image(key="-IMAGE-")]
         ]
         layout = [
@@ -75,7 +74,9 @@ class ImageLabeller:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("--photo_dir", type=str, nargs="?", default="../photos/faces")
+    parser.add_argument("--label_dir", type=str, nargs="?", default="../photos/labelled")
     parser.add_argument("names", type=str, nargs="+")
     args = parser.parse_args()
-    gui = ImageLabeller("../photos/faces", "../photos/labelled", args.names)
+    gui = ImageLabeller(args.photo_dir, args.label_dir, args.names)
     gui.show()

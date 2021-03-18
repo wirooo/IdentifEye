@@ -1,14 +1,16 @@
 import cv2
 import torch
 import numpy as np
-from facenet_pytorch import MTCNN
 from PIL import Image
+from facenet_pytorch import MTCNN
 from torchvision import transforms, models
 import torch.nn as nn
 
 
-class FaceDetector():
-
+class FaceDetector:
+    """
+    Program that classifies images from video capture based on trained models.
+    """
     def __init__(self, mtcnn, clf, class_names, device):
         self.mtcnn = mtcnn
         self.clf = clf.to(device)
@@ -16,6 +18,13 @@ class FaceDetector():
         self.class_names = list(map(lambda str: str[0].upper() + str[1:].lower(), class_names))
 
     def draw(self, frame, boxes, face_probs, name_probs):
+        """
+        Draws bounding boxes and probabilities of faces onto captured frame
+        :param frame: OpenCV frame captured to draw on
+        :param boxes: list of bounding boxes returned by mtcnn
+        :param face_probs: list of probabilites/confidences for each face
+        :param name_probs: list of model outputs for each name
+        """
         for box, face_prob, name_prob in zip(boxes, face_probs, name_probs):
             name_preds = sorted([(self.class_names[i], name_prob[i]) for i in range(len(name_prob))], key=lambda x: x[1], reverse=True)
             if len(name_preds) > 3:
@@ -30,8 +39,13 @@ class FaceDetector():
         return frame
 
     def classify_face(self, face):
-        destRGB = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
-        img = Image.fromarray(destRGB.astype('uint8'), 'RGB')
+        """
+        Classifies the given face image by running through classifier
+        :param face: OpenCV image object cropped to face
+        :return: integer prediction label and list of probability outputs
+        """
+        face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
+        img = Image.fromarray(face.astype('uint8'), 'RGB')
 
         transform = transforms.Compose(
             [
@@ -52,6 +66,10 @@ class FaceDetector():
         return pred, out
 
     def run(self):
+        """
+        Enables the default video capture device and begins to classify each face. Quit by pressing 'q'
+        :return:
+        """
         cap = cv2.VideoCapture(0)
         while True:
             ret, frame = cap.read()
