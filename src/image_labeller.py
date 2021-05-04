@@ -52,7 +52,13 @@ class ImageLabeller:
         """
         Runs the gui and processes user input
         """
-        photo_dir = os.listdir(self.img_dir)
+        dir = os.listdir(self.img_dir)
+        photo_dir = []
+        for item in dir:
+            if item != ".gitignore":
+                print(item)
+                photo_dir.append(item)
+
         i = 0
         self.window.read()
         while i < len(photo_dir):

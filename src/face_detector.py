@@ -44,8 +44,8 @@ class FaceDetector:
         :param face: OpenCV image object cropped to face
         :return: integer prediction label and list of probability outputs
         """
-        face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
-        img = Image.fromarray(face.astype('uint8'), 'RGB')
+        face_transform = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
+        img = Image.fromarray(face_transform.astype('uint8'), 'RGB')
 
         transform = transforms.Compose(
             [
@@ -80,8 +80,9 @@ class FaceDetector:
                     for box in boxes:
                         y1, y2, x1, x2 = int(box[1]), int(box[3]), int(box[0]), int(box[2])
                         face = frame[y1:y2, x1:x2]
-                        pred, probs = self.classify_face(face)
-                        name_probs.append(probs)
+                        if face.size > 0:
+                            pred, probs = self.classify_face(face)
+                            name_probs.append(probs)
 
                     self.draw(frame, boxes, face_probs, name_probs)
                 else:
@@ -98,6 +99,7 @@ class FaceDetector:
 
 if __name__ == "__main__":
     class_names = np.load("../model_save/class_names.npy")
+    print(class_names)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(device)
     clf = models.resnet18(pretrained=True)
