@@ -1,12 +1,12 @@
 # Identifeye
-Trains a model to perform facial recognition and labelling on your friends. 
+Trains a model to perform facial recognition and classification on your friends. 
 Uses Google Photos API to download images.
 Classification model developed using Pytorch using transfer learning on a pretrained CNN and facial recognition using facenet-pytorch.
-Contains a GUI based tool developed with PySimpleGUI to help labelling images.
+Contains a GUI based tool developed with PySimpleGUI to help label images.
 
 ### Requirements
  - Working & compatible versions of Python, torch. Developed with `pip install torch==1.7.1+cu102 torchvision==0.8.2+cu102 torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html`
- - Properly configured CUDA machine for use in Pytorch. Guide [here](https://medium.datadriveninvestor.com/installing-pytorch-and-tensorflow-with-cuda-enabled-gpu-f747e6924779). Developed Cuda 10.2
+ - Properly configured CUDA machine for use in Pytorch. Guide [here](https://medium.datadriveninvestor.com/installing-pytorch-and-tensorflow-with-cuda-enabled-gpu-f747e6924779). Developed with Cuda 10.2
  - `pip install -r requirements.txt`
  - A camera connected to your machine. Accessed by OpenCV as `VideoCapture(0)`
  - Google Developer enabled account: See [here](https://developers.google.com/)
